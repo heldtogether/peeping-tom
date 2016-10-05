@@ -30,7 +30,6 @@ class Setup:
 		# Start the app as though it's
 		# already set up. Have the user
 		# choose to configure it.
-		self.__exit_setup()
 		while(1):
 			s = raw_input()
 			self.setup_mode = not self.setup_mode
