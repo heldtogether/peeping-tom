@@ -32,7 +32,7 @@ class Setup:
 
 	def __create_default_network(self):
 		source = os.getcwd() + "/wifi-config/default.conf"
-		target = "/etc/networks/interfaces"
+		target = "/etc/network/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
 			shutil.copy(source, target)
@@ -40,7 +40,7 @@ class Setup:
 
 	def __create_adhoc_network(self):
 		source = os.getcwd() + "/wifi-config/adhoc.conf"
-		target = "/etc/networks/interfaces"
+		target = "/etc/network/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
 			shutil.copy(source, target)
