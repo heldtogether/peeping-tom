@@ -6,7 +6,8 @@ from subprocess import call
 import threading
 import time
 
-from server import Server
+from admin.utils import Server
+from admin.controllers import SetupController
 
 class Setup:
 
@@ -69,7 +70,5 @@ class Setup:
 		self.server.stop()
 
 	def __setup_routes(self):
-		self.bottle.route('/', 'GET', self.index)
-
-	def index(self):
-		return 'Hello World!'
+		setup_controller = SetupController()
+		self.bottle.route('/', 'GET', setup_controller.index)

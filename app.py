@@ -5,7 +5,7 @@ import threading
 import time
 import sys
 
-from setup import Setup
+from peepingtom import Setup
 
 class PeepingTom:
 
