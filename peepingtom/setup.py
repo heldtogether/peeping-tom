@@ -1,4 +1,5 @@
 import bottle
+import fileinput
 import logging
 import os
 import shutil
@@ -50,15 +51,19 @@ class Setup:
 		self.__stop_server()
 
 	def __create_default_network(self):
-		source = os.path.dirname(__file__) + "/wifi-config/default.conf"
+		source = os.path.dirname(__file__) + "/../wifi-config/default.conf"
 		target = "/etc/network/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
 			shutil.copy(source, target)
+			for line in fileinput.input(source, inplace=True):
+				print line.replace("{{ssid}}", self.ssid),
+			for line in fileinput.input(source, inplace=True):
+				print line.replace("{{password}}", self.password),
 			call(["dhclient", "wlan0"])
 
 	def __create_adhoc_network(self):
-		source = os.path.dirname(__file__) + "/wifi-config/adhoc.conf"
+		source = os.path.dirname(__file__) + "/../wifi-config/adhoc.conf"
 		target = "/etc/network/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
