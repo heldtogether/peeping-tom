@@ -14,7 +14,7 @@ class PeepingTom:
 		self.project_id = arguments.project_id
 		self.client = gitlab.Gitlab('http://gitlab.com', self.private_token)
 		self.setup_mode = False
-		self.setup = Setup()
+		self.setup = Setup(arguments.debug)
 		logging.basicConfig(level=arguments.log_level)
 
 	def fetch_build_status(self, project_id):
@@ -41,10 +41,11 @@ class PeepingTomArgs:
 		self.private_token = ''
 		self.project_id = ''
 		self.log_level = logging.WARN
+		self.debug = False
 
 	def parse_arguments(self, argv):
 		try:
-			opts, args = getopt.getopt(argv, "ht:p:",["log="])
+			opts, args = getopt.getopt(argv, "ht:p:",["log=", "debug"])
 		except getopt.GetoptError:
 			self.display_help()
 			sys.exit(2)
@@ -59,6 +60,8 @@ class PeepingTomArgs:
 				self.project_id = arg
 			elif opt in ("--log"):
 				self.log_level = getattr(logging, arg.upper())
+			elif opt in ("--debug"):
+				self.debug = True
 
 		if self.private_token == '' or self.project_id == '':
 			self.display_help()

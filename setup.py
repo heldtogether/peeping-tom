@@ -5,8 +5,9 @@ import time
 
 class Setup:
 
-	def __init__(self):
+	def __init__(self, debug):
 		self.setup_mode = True
+		self.debug = debug
 
 	# Listen out for input. This will be replaced
 	# by GPIO input'
@@ -32,12 +33,14 @@ class Setup:
 		source = os.getcwd() + "/wifi-config/default.conf"
 		target = "/etc/networks/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
-		# os.symlink(source, target)
-		# call(["dhclient", "wlan0"])
+		if (self.debug is not True):
+			os.symlink(source, target)
+			call(["dhclient", "wlan0"])
 
 	def __create_adhoc_network(self):
 		source = os.getcwd() + "/wifi-config/adhoc.conf"
 		target = "/etc/networks/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
-		# os.symlink(source, target)
-		# call(["dhclient", "wlan0"])
+		if (self.debug is not True):
+			os.symlink(source, target)
+			call(["dhclient", "wlan0"])
