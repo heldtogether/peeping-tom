@@ -14,10 +14,14 @@ class Setup:
 	def __init__(self, debug):
 		self.setup_mode = False
 		self.debug = debug
+
 		self.bottle = bottle.Bottle()
-		self.server = Server(host='localhost', port=8080)
+		self.server = Server(host='', port=8080)
 		self.server.quiet = True
 		self.__setup_routes()
+
+		self.ssid = ''
+		self.password = ''
 
 	# Listen out for input. This will be replaced
 	# by GPIO input'
@@ -69,6 +73,11 @@ class Setup:
 		logging.info("Stopping server.")
 		self.server.stop()
 
+	def __callback(self, ssid, password):
+		self.ssid = ssid
+		self.password = password
+
 	def __setup_routes(self):
-		setup_controller = SetupController()
+		setup_controller = SetupController(self.__callback)
 		self.bottle.route('/', 'GET', setup_controller.index)
+		self.bottle.route('/', 'POST', setup_controller.save)
