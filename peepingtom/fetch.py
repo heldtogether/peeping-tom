@@ -10,7 +10,9 @@ class Fetch:
 
 	def fetch_build_status(self):
 		while (1):
-			latest_commit = self.client.project_commits.list(project_id=self.project_id, page=0, per_page=1)[0]
-			latest_build = latest_commit.builds(page=0, per_page=1)[0];
-			print(latest_build.status)
+			project = self.client.projects.get(self.project_id)
+			if project is not None:
+				latest_commit = self.client.project_commits.list(project_id=project.id, page=0, per_page=1)[0]
+				latest_build = latest_commit.builds(page=0, per_page=1)[0];
+				print(project.path_with_namespace + ":\n" + latest_build.status)
 			time.sleep(5)
