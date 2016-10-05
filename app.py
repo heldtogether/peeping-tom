@@ -1,5 +1,7 @@
 import getopt
 import gitlab
+import threading
+import time
 
 class PeepingTom:
 
@@ -7,6 +9,7 @@ class PeepingTom:
 		self.private_token = arguments.private_token
 		self.project_id = arguments.project_id
 		self.client = gitlab.Gitlab('http://gitlab.com', self.private_token)
+		self.setup_mode = False
 
 	def fetch_build_status(self, project_id):
 		latest_commit = self.client.project_commits.list(project_id=project_id, page=0, per_page=1)[0]
@@ -15,8 +18,26 @@ class PeepingTom:
 		print(latest_build.status)
 
 	def execute(self):
-		self.fetch_build_status(self.project_id)
+		threading.Thread(target=self.start_status_loop).start()
+		threading.Thread(target=self.start_setup_loop).start()
+		while(1):
+			time.sleep(1)
 
+	# Fetch the project status every 30 seconds
+	def start_status_loop(self):
+		while (1):
+			if self.setup_mode is not True:
+				self.fetch_build_status(self.project_id)
+				time.sleep(5)
+
+	# Listen out for input. This will be replaced
+	# by GPIO input'
+	def start_setup_loop(self):
+		while(1):
+			s = raw_input()
+			self.setup_mode = not self.setup_mode
+			print "Setup Mode: %s" % self.setup_mode
+			time.sleep(1)
 
 class PeepingTomArgs:
 
