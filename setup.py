@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from subprocess import call
 import time
 
@@ -34,7 +35,7 @@ class Setup:
 		target = "/etc/networks/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
-			os.symlink(source, target)
+			shutil.copy(source, target)
 			call(["dhclient", "wlan0"])
 
 	def __create_adhoc_network(self):
@@ -42,5 +43,5 @@ class Setup:
 		target = "/etc/networks/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
-			os.symlink(source, target)
+			shutil.copy(source, target)
 			call(["dhclient", "wlan0"])
