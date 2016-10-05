@@ -46,7 +46,7 @@ class Setup:
 		self.__stop_server()
 
 	def __create_default_network(self):
-		source = os.getcwd() + "/wifi-config/default.conf"
+		source = os.path.dirname(__file__) + "/wifi-config/default.conf"
 		target = "/etc/network/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
@@ -54,7 +54,7 @@ class Setup:
 			call(["dhclient", "wlan0"])
 
 	def __create_adhoc_network(self):
-		source = os.getcwd() + "/wifi-config/adhoc.conf"
+		source = os.path.dirname(__file__) + "/wifi-config/adhoc.conf"
 		target = "/etc/network/interfaces"
 		logging.info('Switching network configuration at %s for %s.', target, source)
 		if (self.debug is not True):
