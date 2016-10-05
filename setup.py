@@ -1,14 +1,22 @@
+import bottle
 import logging
 import os
 import shutil
 from subprocess import call
+import threading
 import time
+
+from server import Server
 
 class Setup:
 
 	def __init__(self, debug):
 		self.setup_mode = False
 		self.debug = debug
+		self.bottle = bottle.Bottle()
+		self.server = Server(host='localhost', port=8080)
+		self.server.quiet = True
+		self.__setup_routes()
 
 	# Listen out for input. This will be replaced
 	# by GPIO input'
@@ -29,10 +37,12 @@ class Setup:
 	def __enter_setup(self):
 		logging.info('Entering setup.')
 		self.__create_adhoc_network()
+		self.__start_server()
 
 	def __exit_setup(self):
 		logging.info('Exiting setup.')
 		self.__create_default_network()
+		self.__stop_server()
 
 	def __create_default_network(self):
 		source = os.getcwd() + "/wifi-config/default.conf"
@@ -49,3 +59,17 @@ class Setup:
 		if (self.debug is not True):
 			shutil.copy(source, target)
 			call(["dhclient", "wlan0"])
+
+	def __start_server(self):
+		logging.info("Starting server.")
+		threading.Thread(target=self.bottle.run, kwargs={'server': self.server}).start()
+
+	def __stop_server(self):
+		logging.info("Stopping server.")
+		self.server.stop()
+
+	def __setup_routes(self):
+		self.bottle.route('/', 'GET', self.index)
+
+	def index(self):
+		return 'Hello World!'
