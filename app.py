@@ -1,39 +1,23 @@
 import getopt
-import gitlab
 import logging
 import threading
 import time
 import sys
 
-from peepingtom import Setup
+from peepingtom import Fetch, Setup
 
 class PeepingTom:
 
 	def __init__(self, arguments):
-		self.private_token = arguments.private_token
-		self.project_id = arguments.project_id
-		self.client = gitlab.Gitlab('http://gitlab.com', self.private_token)
-		self.setup_mode = False
 		self.setup = Setup(arguments.debug)
+		self.fetch = Fetch(arguments.private_token, arguments.project_id)
 		logging.basicConfig(level=arguments.log_level)
 
-	def fetch_build_status(self, project_id):
-		latest_commit = self.client.project_commits.list(project_id=project_id, page=0, per_page=1)[0]
-		latest_build = latest_commit.builds(page=0, per_page=1)[0];
-		print(latest_build.status)
-
 	def execute(self):
-		threading.Thread(target=self.start_status_loop).start()
+		threading.Thread(target=self.fetch.fetch_build_status).start()
 		threading.Thread(target=self.setup.await_input).start()
 		while(1):
 			time.sleep(1)
-
-	# Fetch the project status every 30 seconds
-	def start_status_loop(self):
-		while (1):
-			if self.setup.setup_mode is not True:
-				self.fetch_build_status(self.project_id)
-				time.sleep(5)
 
 class PeepingTomArgs:
 
