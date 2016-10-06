@@ -6,16 +6,15 @@ try:
 except ImportError:
 	from utils.mockgpio import GPIO
 
-button_pin  = 17
+class PushButton(threading.Thread):
 
-class ResetButton(threading.Thread):
-
-	def __init__(self):
+	def __init__(self, pin):
 		threading.Thread.__init__(self)
 		self.daemon = True
 
+		self.pin = pin
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(button_pin, GPIO.IN)
+		GPIO.setup(self.pin, GPIO.IN)
 
 		self.prev_input = None
 		self.on_callback = None
@@ -29,7 +28,7 @@ class ResetButton(threading.Thread):
 
 	def run(self):
 		while True:
-			input = GPIO.input(button_pin)
+			input = GPIO.input(self.pin)
 			if not self.prev_input and input and self.on_callback:
 				self.on_callback()
 			elif self.prev_input and not input and self.off_callback:
