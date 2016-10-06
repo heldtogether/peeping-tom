@@ -10,9 +10,12 @@ import time
 from admin.utils import Server
 from admin.controllers import SetupController
 
-class Setup:
+class Setup(threading.Thread):
 
-	def __init__(self, debug):
+	def __init__(self, should_exit, debug):
+		threading.Thread.__init__(self)
+		self.daemon = True
+		self.should_exit = should_exit
 		self.setup_mode = False
 		self.debug = debug
 
@@ -24,13 +27,11 @@ class Setup:
 		self.ssid = ''
 		self.password = ''
 
-	# Listen out for input. This will be replaced
-	# by GPIO input'
-	def await_input(self):
+	def run(self):
 		# Start the app as though it's
 		# already set up. Have the user
 		# choose to configure it.
-		while(1):
+		while not self.should_exit.isSet():
 			s = raw_input()
 			self.setup_mode = not self.setup_mode
 			if self.setup_mode == True:
@@ -71,7 +72,9 @@ class Setup:
 
 	def __start_server(self):
 		logging.info("Starting server.")
-		threading.Thread(target=self.bottle.run, kwargs={'server': self.server}).start()
+		thread = threading.Thread(target=self.bottle.run, kwargs={'server': self.server})
+		thread.daemon = True
+		thread.start()
 
 	def __stop_server(self):
 		logging.info("Stopping server.")

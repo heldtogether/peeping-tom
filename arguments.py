@@ -1,23 +1,6 @@
 import getopt
 import logging
-import threading
-import time
 import sys
-
-from peepingtom import Fetch, Setup
-
-class PeepingTom:
-
-	def __init__(self, arguments):
-		self.setup = Setup(arguments.debug)
-		self.fetch = Fetch(arguments.private_token, arguments.project_id)
-		logging.basicConfig(level=arguments.log_level)
-
-	def execute(self):
-		threading.Thread(target=self.fetch.fetch_build_status).start()
-		threading.Thread(target=self.setup.await_input).start()
-		while(1):
-			time.sleep(1)
 
 class PeepingTomArgs:
 

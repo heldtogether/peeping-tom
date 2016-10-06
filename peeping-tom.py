@@ -1,19 +1,31 @@
 #!/usr/bin/python
 
-import os, sys
+import logging
+import sys
+import threading
+import time
 
-from app import PeepingTom, PeepingTomArgs
+from arguments import PeepingTomArgs
+from peepingtom import Fetch, Setup
 
 def main(argv):
 	args = PeepingTomArgs()
 	args.parse_arguments(argv)
 
-	app = PeepingTom(args)
+	logging.basicConfig(level=args.log_level)
+
+	should_exit = threading.Event()
+	setup = Setup(should_exit, args.debug)
+	fetch = Fetch(should_exit, args.private_token, args.project_id)
+
+	fetch.start()
+	setup.start()
 
 	try:
-		app.execute()
+		while 1:
+			time.sleep(1)
 	except KeyboardInterrupt:
-		os._exit(1)
+		should_exit.set()
 
 if __name__ == "__main__":
    main(sys.argv[1:])
