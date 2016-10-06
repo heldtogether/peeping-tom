@@ -2,7 +2,7 @@ import gitlab
 import threading
 import time
 
-from output import LCD
+from peepingtom.output import LCD
 
 class Fetch(threading.Thread):
 

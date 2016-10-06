@@ -1,2 +1,2 @@
-from setup import Setup
-from fetch import Fetch
+from tasks import *
+from arguments import Arguments

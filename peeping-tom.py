@@ -5,18 +5,17 @@ import sys
 import threading
 import time
 
-from arguments import PeepingTomArgs
-from peepingtom import Fetch, Setup
+from peepingtom import Arguments, tasks
 
 def main(argv):
-	args = PeepingTomArgs()
+	args = Arguments()
 	args.parse_arguments(argv)
 
 	logging.basicConfig(level=args.log_level)
 
 	should_exit = threading.Event()
-	setup = Setup(should_exit, args.debug)
-	fetch = Fetch(should_exit, args.private_token, args.project_id)
+	setup = tasks.Setup(should_exit, args.debug)
+	fetch = tasks.Fetch(should_exit, args.private_token, args.project_id)
 
 	fetch.start()
 	setup.start()

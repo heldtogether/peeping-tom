@@ -2,7 +2,7 @@ import getopt
 import logging
 import sys
 
-class PeepingTomArgs:
+class Arguments:
 
 	def __init__(self):
 		self.private_token = ''
