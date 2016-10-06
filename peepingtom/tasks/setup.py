@@ -12,7 +12,7 @@ from admin.controllers import SetupController
 
 class Setup(threading.Thread):
 
-	def __init__(self, should_exit, debug, push_button):
+	def __init__(self, should_exit, debug, lcd, lcd_lock, push_button):
 		threading.Thread.__init__(self)
 		self.daemon = True
 		self.should_exit = should_exit
@@ -21,6 +21,8 @@ class Setup(threading.Thread):
 		self.setup_mode = False
 		self.debug = debug
 
+		self.lcd = lcd
+		self.lcd_lock = lcd_lock
 		self.button = push_button
 		self.button.set_on_callback(self.toggle_setup)
 
@@ -45,12 +47,18 @@ class Setup(threading.Thread):
 			self.__exit_setup()
 
 	def __enter_setup(self):
+		self.lcd_lock.acquire()
 		logging.info('Entering setup.')
+		self.lcd.clear()
+		self.lcd.message("Entering\nSetup")
 		self.__create_adhoc_network()
 		self.__start_server()
+		self.lcd.message("Join PEEPING_TOM\nVisit 192.168.0.1:8080")
 
 	def __exit_setup(self):
 		logging.info('Exiting setup.')
+		self.lcd.clear()
+		self.lcd_lock.release()
 		self.__create_default_network()
 		self.__stop_server()
 

@@ -15,10 +15,11 @@ def main(argv):
 
 	reset_button = io.PushButton(17)
 	lcd = io.LCD()
+	lcd_lock = threading.Lock()
 
 	should_exit = threading.Event()
-	setup = tasks.Setup(should_exit, args.debug, reset_button)
-	fetch = tasks.Fetch(should_exit, args.private_token, args.project_id, lcd)
+	setup = tasks.Setup(should_exit, args.debug, lcd, lcd_lock, reset_button)
+	fetch = tasks.Fetch(should_exit, args.private_token, args.project_id, lcd, lcd_lock)
 
 	fetch.start()
 	setup.start()
