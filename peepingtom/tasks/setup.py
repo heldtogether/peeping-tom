@@ -9,6 +9,7 @@ import time
 
 from admin.utils import Server
 from admin.controllers import SetupController
+from peepingtom.io import ResetButton
 
 class Setup(threading.Thread):
 
@@ -16,8 +17,12 @@ class Setup(threading.Thread):
 		threading.Thread.__init__(self)
 		self.daemon = True
 		self.should_exit = should_exit
+
 		self.setup_mode = False
 		self.debug = debug
+
+		self.button = ResetButton()
+		self.button.set_on_callback(self.toggle_setup)
 
 		self.bottle = bottle.Bottle()
 		self.server = Server(host='', port=8080)
@@ -28,17 +33,16 @@ class Setup(threading.Thread):
 		self.password = ''
 
 	def run(self):
-		# Start the app as though it's
-		# already set up. Have the user
-		# choose to configure it.
+		self.button.start()
 		while not self.should_exit.isSet():
-			s = raw_input()
-			self.setup_mode = not self.setup_mode
-			if self.setup_mode == True:
-				self.__enter_setup()
-			else:
-				self.__exit_setup()
 			time.sleep(1)
+
+	def toggle_setup(self):
+		self.setup_mode = not self.setup_mode
+		if self.setup_mode == True:
+			self.__enter_setup()
+		else:
+			self.__exit_setup()
 
 	def __enter_setup(self):
 		logging.info('Entering setup.')
