@@ -2,17 +2,15 @@ import gitlab
 import threading
 import time
 
-from peepingtom.io import LCD
-
 class Fetch(threading.Thread):
 
-	def __init__(self, should_exit, private_token, project_id):
+	def __init__(self, should_exit, private_token, project_id, lcd):
 		threading.Thread.__init__(self)
 		self.should_exit = should_exit
 		self.private_token = private_token
 		self.project_id = project_id
 		self.client = gitlab.Gitlab('http://gitlab.com', self.private_token)
-		self.lcd = LCD()
+		self.lcd = lcd
 
 	def run(self):
 		while not self.should_exit.isSet():

@@ -9,11 +9,10 @@ import time
 
 from admin.utils import Server
 from admin.controllers import SetupController
-from peepingtom.io import ResetButton
 
 class Setup(threading.Thread):
 
-	def __init__(self, should_exit, debug):
+	def __init__(self, should_exit, debug, push_button):
 		threading.Thread.__init__(self)
 		self.daemon = True
 		self.should_exit = should_exit
@@ -21,7 +20,7 @@ class Setup(threading.Thread):
 		self.setup_mode = False
 		self.debug = debug
 
-		self.button = ResetButton()
+		self.button = push_button
 		self.button.set_on_callback(self.toggle_setup)
 
 		self.bottle = bottle.Bottle()

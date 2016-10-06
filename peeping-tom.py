@@ -5,7 +5,7 @@ import sys
 import threading
 import time
 
-from peepingtom import Arguments, tasks
+from peepingtom import Arguments, tasks, io
 
 def main(argv):
 	args = Arguments()
@@ -13,9 +13,12 @@ def main(argv):
 
 	logging.basicConfig(level=args.log_level)
 
+	reset_button = io.PushButton(17)
+	lcd = io.LCD()
+
 	should_exit = threading.Event()
-	setup = tasks.Setup(should_exit, args.debug)
-	fetch = tasks.Fetch(should_exit, args.private_token, args.project_id)
+	setup = tasks.Setup(should_exit, args.debug, reset_button)
+	fetch = tasks.Fetch(should_exit, args.private_token, args.project_id, lcd)
 
 	fetch.start()
 	setup.start()
@@ -27,4 +30,4 @@ def main(argv):
 		should_exit.set()
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+	main(sys.argv[1:])
