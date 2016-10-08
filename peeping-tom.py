@@ -18,6 +18,11 @@ def main(argv):
     lcd = io.LCD()
     lcd_lock = threading.Lock()
 
+    lcd_lock.acquire()
+    lcd.message("Starting\nPeeping Tom...")
+    time.sleep(2)
+    lcd_lock.release()
+
     should_exit = threading.Event()
     setup = tasks.Setup(should_exit, args.debug, lcd, lcd_lock, reset_button)
     fetch = tasks.Fetch(should_exit, args.private_token, args.project_id, lcd, lcd_lock)
