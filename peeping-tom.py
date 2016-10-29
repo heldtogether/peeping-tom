@@ -14,7 +14,7 @@ def main(argv):
 
     logging.basicConfig(level=args.log_level)
 
-    reset_button = io.PushButton(17)
+    reset_button = io.PushButton(4)
     lcd = io.LCD()
     lcd_lock = threading.Lock()
 
