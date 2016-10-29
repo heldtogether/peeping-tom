@@ -6,6 +6,7 @@ class GPIO:
     BCM = None
     IN = None
     OUT = None
+    PUD_DOWN = None
 
     @staticmethod
     def setmode(mode):
