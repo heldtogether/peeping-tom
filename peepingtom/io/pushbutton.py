@@ -14,7 +14,7 @@ class PushButton(threading.Thread):
 
         self.pin = pin
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN)
+        GPIO.setup(self.pin, GPIO.IN, GPIO.PUD_DOWN)
 
         self.prev_input = None
         self.on_callback = None
