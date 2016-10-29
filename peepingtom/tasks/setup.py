@@ -53,6 +53,7 @@ class Setup(threading.Thread):
         self.lcd.message("Entering\nSetup")
         self.__create_adhoc_network()
         self.__start_server()
+        self.lcd.clear()
         self.lcd.message("Join PEEPING_TOM\nVisit 192.168.0.1:8080")
 
     def __exit_setup(self):
@@ -64,7 +65,7 @@ class Setup(threading.Thread):
 
     def __create_default_network(self):
         if self.debug is not True:
-            source = os.path.dirname(__file__) + "/../templates/wifi/default.conf"
+            source = os.path.dirname(__file__) + "/../templates/wifi/interfaces.conf"
             target = "/etc/network/interfaces"
             backup = target + ".old"
             if self.changes_made:
@@ -78,17 +79,21 @@ class Setup(threading.Thread):
             else:
                 logging.info('Switching network configuration at %s for %s.', target, backup)
                 shutil.move(backup, target)
-            call(["dhclient", "wlan0"])
+            call(["ifdown", "wlan0=default"])
+            call(["ifdown", "wlan0=adhoc"])
+            call(["ifup", "wlan0=default"])
 
     def __create_adhoc_network(self):
         if self.debug is not True:
-            source = os.path.dirname(__file__) + "/../templates/wifi/adhoc.conf"
+            source = os.path.dirname(__file__) + "/../templates/wifi/interfaces.conf"
             target = "/etc/network/interfaces"
             backup = target + ".old"
             logging.info('Switching network configuration at %s for %s.', target, source)
             shutil.move(target, backup)
             shutil.copy(source, target)
-            call(["dhclient", "wlan0"])
+            call(["ifdown", "wlan0=default"])
+            call(["ifdown", "wlan0=adhoc"])
+            call(["ifup", "wlan0=adhoc"])
 
     def __start_server(self):
         logging.info("Starting server.")
