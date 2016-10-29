@@ -13,7 +13,7 @@ class GPIO:
         pass
 
     @staticmethod
-    def setup(pin, mode):
+    def setup(pin, mode, modifier=PUD_DOWN):
         pass
 
     @staticmethod
